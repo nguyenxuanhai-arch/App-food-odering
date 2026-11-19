@@ -1,0 +1,24 @@
+✔ KAN-4: v1.0 tái hiện lỗi nhận số lượng 0 (1.382239ms)
+✔ KAN-4: v1.1 chặn số âm nhưng vẫn nhận 0, cần QA trả lại (0.272221ms)
+✔ KAN-4: TC-QTY-01 trên v1.2 (0.31754ms)
+✔ KAN-4: TC-QTY-02 trên v1.2 (0.149887ms)
+✔ KAN-4: TC-QTY-03 trên v1.2 (0.193042ms)
+✔ KAN-4: TC-QTY-04 trên v1.2 (0.124629ms)
+✔ KAN-4: TC-QTY-05 trên v1.2 (0.189136ms)
+✔ KAN-4: TC-QTY-06 trên v1.2 (0.169867ms)
+✔ KAN-4: từ chối dữ liệu sai và giữ nguyên giỏ đã có món (0.267154ms)
+✔ KAN-4: cộng dồn số lượng và tổng tiền hợp lệ (0.274215ms)
+✔ KAN-37: từ chối orderId thiếu (0.528629ms)
+✔ KAN-37: từ chối orderId rỗng (0.145279ms)
+✔ KAN-37: từ chối orderId khoảng trắng (0.122044ms)
+✔ KAN-37: từ chối orderId sai kiểu (0.12566ms)
+✔ KAN-37: đầu vào hợp lệ giữ đúng mã đơn và sinh dữ liệu QR (0.236708ms)
+✔ KAN-37: vẫn từ chối số tiền bằng 0 và âm (0.243448ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 180.7179
