@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KAN-4 | Kiểm thử giỏ hàng</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef3f9;color:#172b4d;font:17px/1.5 system-ui,sans-serif}main{max-width:1040px;margin:30px auto;padding:28px;background:white;border-radius:16px}header{display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:29px;margin:8px 0}h2{font-size:21px}small,.muted{color:#52647a}.tag{background:#e8f0ff;padding:6px 12px;border-radius:6px}section{padding:18px 0;border-top:1px solid #dae2ee}.grid{display:grid;grid-template-columns:1fr 1fr;gap:35px}label{display:block;margin:12px 0 5px}select,input,button{font:inherit;padding:10px 14px;border-radius:7px;border:1px solid #a7b8cf}input{width:130px}button{background:#075bd8;color:white;border:0;cursor:pointer;margin:10px 8px 0 0}.secondary{background:#e8edf5;color:#172b4d}#result{padding:14px;border-left:5px solid #7b8ea8;background:#f3f6fa;min-height:58px}.accepted{border-color:#1a8158!important}.rejected{border-color:#c43132!important}table{width:100%;border-collapse:collapse;font-size:15px}th,td{text-align:left;padding:9px;border-bottom:1px solid #dae2ee}code{font-size:14px}a{color:#075bd8}@media(max-width:750px){main{margin:10px}.grid{grid-template-columns:1fr}header{display:block}}
+</style>
+<main>
+<header><div><span class="tag">Jira KAN-4 · QTY-01</span><h1>Kiểm thử số lượng giỏ hàng</h1><small>Môi trường kiểm thử chức năng giỏ hàng</small></div><div><label for="build">Phiên bản</label><select id="build"><option value="v1.0">v1.0</option><option value="v1.1">v1.1</option><option value="v1.2">v1.2</option></select></div></header>
+<section><strong>Yêu cầu QTY-01:</strong> Số lượng phải là số nguyên từ 1 trở lên. Đầu vào sai bị từ chối và không thay đổi giỏ hàng.<p class="muted">Đối chiếu hành vi từng phiên bản với QTY-01. Mỗi ca kiểm thử bắt đầu từ giỏ hàng đã đặt lại.</p></section>
+<section class="grid"><div><h2>Sổ tay · 25.000 đ</h2><label for="quantity">Số lượng</label><input id="quantity" type="text" inputmode="decimal" value="0" autocomplete="off"><div><button id="add">Thêm vào giỏ</button><button id="reset" class="secondary">Đặt lại giỏ</button></div><p id="result" role="status" aria-live="polite">Chưa thực hiện ca kiểm thử.</p></div><div><h2>Kết quả quan sát</h2><p>Bản đang chạy: <strong id="version">v1.0</strong></p><p>Tổng số lượng: <strong id="count">0</strong></p><p>Tổng tiền: <strong id="total">0 đ</strong></p><p id="trace" class="muted">Chưa có đầu vào.</p><small>Mỗi ca bắt đầu từ giỏ đã đặt lại. Khi đổi bản dựng, giỏ và thông báo được đặt lại.</small></div></section>
+<section><h2>Bộ ca kiểm thử</h2><table><thead><tr><th>Mã ca</th><th>Đầu vào</th><th>Mong đợi theo QTY-01</th></tr></thead><tbody><tr><td>TC-QTY-01</td><td>0</td><td>Từ chối, giỏ không đổi</td></tr><tr><td>TC-QTY-02</td><td>1</td><td>Thêm đúng 1 sản phẩm</td></tr><tr><td>TC-QTY-03</td><td>-1</td><td>Từ chối, giỏ không đổi</td></tr><tr><td>TC-QTY-04</td><td>1.5</td><td>Từ chối vì không nguyên</td></tr><tr><td>TC-QTY-05</td><td>Bỏ trống</td><td>Yêu cầu nhập số lượng</td></tr><tr><td>TC-QTY-06</td><td>2</td><td>Thêm 2 sản phẩm, tổng 50.000 đ</td></tr></tbody></table></section>
+<footer><small>Truy vết: <a href="https://haixuan.atlassian.net/browse/KAN-4">KAN-4</a> · Bằng chứng cần ghi: phiên bản, đầu vào, kết quả thực tế, trạng thái ca và ảnh.</small></footer>
+</main>
+<script id="cart-core">
+function addToCart(build, raw, previous = 0) {
+  const text = String(raw).trim();
+  const quantity = Number(text);
+  let valid;
+  if (build === 'v1.0') valid = text !== '' && Number.isInteger(quantity);
+  else if (build === 'v1.1') valid = text !== '' && Number.isInteger(quantity) && quantity >= 0;
+  else if (build === 'v1.2') valid = text !== '' && Number.isSafeInteger(quantity) && quantity >= 1 && Number.isSafeInteger(previous + quantity);
+  else throw new Error('Bản dựng không được hỗ trợ');
+  return valid
+    ? {accepted:true, count:previous + quantity, total:(previous + quantity)*25000, message:`Đã thêm ${quantity} Sổ tay vào giỏ.`}
+    : {accepted:false, count:previous, total:previous*25000, message:'Số lượng phải là số nguyên từ 1 trở lên.'};
+}
+</script>
+<script>
+const byId = id => document.getElementById(id);
+let count = 0;
+function resetCart(){count=0;byId('count').textContent='0';byId('total').textContent='0 đ';byId('version').textContent=byId('build').value;byId('result').textContent='Chưa thực hiện ca kiểm thử.';byId('result').className='';byId('trace').textContent='Chưa có đầu vào.';}
+byId('add').addEventListener('click',()=>{const raw=byId('quantity').value;const result=addToCart(byId('build').value,raw,count);count=result.count;byId('count').textContent=String(count);byId('total').textContent=result.total.toLocaleString('vi-VN')+' đ';byId('result').textContent=result.message;byId('result').className=result.accepted?'accepted':'rejected';byId('trace').textContent=`Đầu vào: ${JSON.stringify(raw)} · Hành vi: ${result.accepted?'CHẤP NHẬN':'TỪ CHỐI'}`;});
+byId('reset').addEventListener('click',resetCart);
+byId('build').addEventListener('change',resetCart);
+</script></html>

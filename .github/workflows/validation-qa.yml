@@ -1,0 +1,35 @@
+name: Validation QA
+on:
+  pull_request:
+    paths:
+      - 'qa/**'
+      - 'tests/validation.test.cjs'
+      - 'My_workflow.json'
+      - '.github/workflows/validation-qa.yml'
+  push:
+    branches: ['fix/KAN-4-KAN-37-validation']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validation-tests:
+    name: KAN-4 cart and KAN-37 workflow logic
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run QA tests and preserve exit status
+        shell: bash
+        run: |
+          set -o pipefail
+          node --test tests/validation.test.cjs | tee validation-test-results.txt
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-qa-evidence
+          path: |
+            qa/
+            validation-test-results.txt
